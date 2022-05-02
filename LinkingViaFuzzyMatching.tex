@@ -1,0 +1,275 @@
+\documentclass{beamer}
+\usepackage{listings}
+\usepackage{color}
+\usetheme{Berlin}
+\title{Linking via Fuzzy Matching}
+\author{Alexey Osipov \\ Sidenis, Swiss Re Institute}
+\date{11.12.2020}
+\begin{document}
+\maketitle
+\begin{frame}[fragile]
+\frametitle{Affiliation.}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=20mm, scale=0.01]{sidenis.jpg}
+\end{figure}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=40mm, scale=0.01]{swiss_re_institute.jpg}
+\end{figure}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=30mm, scale=0.01]{crd.jpg}
+\end{figure}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Problem.}
+We would like to link a database dataset with an input dataset by text fields:
+
+\begin{block}{Test cases.}
+\begin{enumerate}
+	\item Matching by meaningful content.
+	\item Matching by short names.
+	\item Matching with unstructured text.
+\end{enumerate}
+\end{block}
+
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Matching by meaningful content.}
+\begin{block}{Statement of the problem}
+We have a database of industry classifications.
+
+We would like:
+\begin{itemize}
+	\item to classify a new object,
+	\item to link classifications.
+\end{itemize}
+\end{block}
+
+\begin{block}{Key features:}
+\begin{itemize}
+	\item Synonyms are important.
+	\item We can give up to 5 recommendations.
+\end{itemize}
+\end{block}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Example of linking.}
+\begin{block}{Example}
+In database:
+\begin{itemize}
+\item \textcolor{red}{\textbf{Establishments primarily engaged in the production of rice}}
+
+\item \textbf{Growing of rice (including organic farming and the growing of genetically modified rice)}
+
+\item \textbf{Establishments primarily engaged in performing crop planting, cultivating, and protecting services.}
+
+\end{itemize}
+A new object:
+\begin{itemize}
+\item \textcolor{red}{\textbf{Rice factories.}}
+\end{itemize}
+\end{block}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{How to link?}
+\begin{block}{Key points.}
+\begin{itemize}
+  \item Preprocessing.
+	\item Embeddings.
+	\item Word2vec, GloVe.
+	\item Embedding for a phrase, e.g., by averaging.
+	\item Compare via cosine similarity.
+	\item Other phrase embeddings: doc2vec.
+\end{itemize}
+\end{block}
+\begin{block}{R packages.}
+\begin{itemize}
+\item word2vec (word2vec, doc2vec)
+\item text2vec, textTinyR
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Linking by short phrases.}
+\begin{block}{Statement of the problem}
+We have a database of large companies.
+
+We would like to understand if a company belongs to the database.
+\end{block}
+\begin{block}{Key features:}
+\begin{itemize}
+	\item All names are not so long.
+	\item Misprints are possible.
+	\item Same names can be represented in different ways.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Example of linking.}
+\begin{block}{Example.}
+We have data like
+ 
+ \begin{itemize}
+	 \item \textcolor{red}{\textbf{BP plc}}
+	 \item \textbf{BHP}
+	 \item \textbf{British Petroleum}
+ \end{itemize}
+
+We would like to link a phrase with it:
+
+\begin{itemize}
+\item \textcolor{red}{\textbf{BP Amoco plc}}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{How to link?}
+\begin{block}{Algorithm.}
+\begin{itemize}
+  \item Preprocessing/normalization.
+	\item Fuzzy matching by string distances:
+	
+	\begin{enumerate}
+		\item Jaccard similarity.
+		\item Jaro-Winkler.
+		\item Levenshtein.
+		\item Damereau-Levenshtein.
+		\item Optimal string alignment.
+		\item Longest common substring.
+	\end{enumerate}
+	\item Filtering by threshold values.
+	\item Disambiguation logic.
+\end{itemize}
+\end{block}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Relevant R packages.}
+\begin{block}{R packages.}
+\begin{itemize}
+\item stringdist
+\item hash
+\item megalodon
+\end{itemize}
+\end{block}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=50mm, scale=0.1]{megalodon.jpg}
+\end{figure}
+\end{frame}
+\begin{frame}
+\frametitle{Linking with unstructured text.}
+\begin{block}{Statement of the problem}
+We have a database of claims. 
+A claim name is unstructured text.
+
+We would like to link a company with the corresponding claims.
+\end{block}
+
+\begin{block}{Key features.}
+\begin{itemize}
+\item Large size of the database.
+\item Not all text fields are relevant.
+\item Linking with unstructured text.
+\item Misprints are possible.
+\item Same names can be represented in different ways.
+\item Text fields can be quite long.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Examples.}
+\begin{block}{Examples.}
+In database we have
+
+\begin{itemize}
+	\item \textcolor{red}{\textbf{Grupo Acerinox, S. A. 257768}}
+	\item \textbf{Cyclone Klaus}
+	\item \textbf{DO NOT USE Sweco Lietuva UAB}
+\end{itemize}
+
+We would like to link it with company like:
+
+\begin{itemize}
+\item
+\textcolor{red}{\textbf{Acerinox}}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{General scheme.}
+\begin{block}{Scheme.}
+\begin{enumerate}
+	\item Classification block (distinguish noisy entries).
+	\item Entity extraction block.
+	\item Linking block
+\end{enumerate}
+\end{block}
+\end{frame}
+
+\begin{frame}{Classification block}
+\begin{block}{Key points:}
+\begin{itemize}
+	\item features from the other fields of the database
+	\item features from claim name
+	\item features based on presence of key words
+	\item processing of features
+	\item manually labelled dataset for supervised classification
+	\item xgboost
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Entity extraction block.}
+\begin{block}{Key points}
+\begin{itemize}
+\item spacy NER model, spacyr
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=100mm, scale=0.3]{spacy_ner.jpg}
+\end{figure}
+
+\item regular expressions
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Linking block.}
+\begin{block}{Key problems.}
+\begin{itemize}
+\item Cross product is large.
+\item The text field have different size (the database one is large, the input text one is smaller).
+\end{itemize}
+\end{block}
+\begin{block}{Algorithm.}
+\begin{itemize}
+	\item calculate metric that can be computed fast (TFIDF-based)
+	\item calculate second level metrics (jaccard-based)
+	\item choose threshold via clustering and manual validation
+	\item k-means from stats, hdbscan from dbscan
+	\item disambiguation block
+\end{itemize}
+\end{block}
+\end{frame}
+\begin{frame}{Thank you very much!}
+\begin{block}{Messages.}
+\begin{itemize}
+	\item Sometimes taking into account synonyms helps, sometimes it does not. 
+	\item \textbf{megalodon} can be used to hunt for large companies.
+	\item We can get better results by taking into account the specifics of the problem.
+\end{itemize}
+\end{block}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=40mm, scale=0.1]{any_questions.jpg}
+\end{figure}
+\end{frame}
+\end{document}
