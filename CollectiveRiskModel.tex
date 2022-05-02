@@ -1,0 +1,183 @@
+\documentclass{beamer}
+\usepackage{listings}
+\usetheme{Berlin}
+\title{Collective risk model with \textbf{actuar}.}
+\author{Alexey Osipov}
+\date{09.06.2020}
+\begin{document}
+\maketitle
+\begin{frame}[fragile]
+\frametitle{Statement of the problem.}
+\begin{itemize}
+\item $N$ wildfires per year. Damage from a wildfire is $X$. What is aggregate annual damage from wildfires?
+$$Y=X_1 + \ldots + X_N,\quad \textrm{ where }N\textrm{ is random.}$$
+\item $N$ is frequency (Poisson).
+$X$ is severity (Pareto).
+Result is Compound Poisson distribution or collective risk model.
+\item We want to find:
+$$mean(Y)=?,\quad var(Y)=?,$$
+$$VaR(Y, 0.99) = ?,\quad TVaR(Y, 0.99) = ?.$$
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Pause 1.}
+\begin{center}
+Let us look into the code!
+\end{center}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Methods from \textbf{actuar::aggregateDist}.}
+\begin{enumerate}
+	\item Monte Carlo.
+	\item FFT.
+	\item Panjer recursion.
+	\item Normal approximation based methods.
+\end{enumerate}
+
+\textbf{actuar::aggregateDist} returns us \textbf{ecdf}.
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Monte Carlo methods: description.}
+\begin{itemize}
+	\item Fix large number, like $K = 1000000$.
+	\item Generate $K$ random years. For each year generate random number of wildfires. For each wildfire generate damage.
+	\item Complexity is: $O(K\lambda)$.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Pause 2.}
+\begin{center}
+Let us look into the code!
+\end{center}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Monte Carlo methods: critics.}
+\begin{itemize}
+	\item How to choose $K$?
+	\item Should $K$ be connected with mean frequency?
+	\item The method is \textbf{slow}, but \textbf{flexible}.
+	\item What can be done further? Stratified sampling, Sobol sequence, Latin hypercube, Iman Conover, $\ldots$
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{FFT.}
+\begin{itemize}
+\item Discretize frequency.
+\item Fix $n$, calculate $p_n$, probability to have exactly $n$ wildfires.
+\item $Y_n = X_1 + \ldots + X_n$ is a convolution.
+It is calculated via FFT.
+$$FFT(Y_n) = FFT(X_1)\cdot\ldots\cdot FFT(X_n)$$
+$$Y_n = FFT^{-1}(FFT(X_1)\cdot\ldots\cdot FFT(X_n))$$
+\item complexity is $O(N\ln N)$ (for direct convolution calculation it is $O(N^3)$).
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Pause 3.}
+\begin{center}
+Let us look into the code!
+\end{center}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{FFT, critics.}
+\begin{itemize}
+\item How to choose discretization step?
+\item How to choose ranges?
+\item Is uniform discretization obligatory?
+\item Is it really FFT in actuar?
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Panjer recursion.}
+\begin{itemize}
+\item frequency from Panjer class.
+ $$P(N = k) = (a+b/k)P(N = k-1).$$
+\item discretize severity with step $h$
+\item calculate recursively $P(S = hk)$
+\item frequency reduction trick: reduce frequency $m$ times by calculating $\ln(m)/\ln(2)$ of convolutions.
+\item Complexity is $O(N^2)$.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Pause 4.}
+\begin{center}
+Let us look into the code!
+\end{center}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Panjer recursion, critics.}
+\begin{itemize}
+\item How to choose discretization range?
+\item How to choose discretization step?
+\item Should we do frequency reduction trick?
+\item Is uniform discretization obligatory?
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Normal approximation.}
+Method 1. 
+\begin{itemize}
+\item Calculate 2 first moments.
+\item Approximate by normal distribution.
+\end{itemize}
+
+Method 2.
+\begin{itemize}
+\item Calculate 3 first moments (skewness).
+\item Normal series approximation.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Pause 5.}
+\begin{center}
+Let us look into the code!
+\end{center}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Normal approximation, critics.}
+\begin{itemize}
+\item What to do if one of the moments is infinite?
+\item Is it OK to approximate a model with 3 parameters by 2 parameters?
+\item We underestimate the right tail.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Test description.}
+\begin{itemize}
+\item frequency is Poisson, severity is Pareto.
+\item mean frequency is from 0.1 to 100.
+\item $\alpha$ from Pareto is from 2.5 to 10.
+\item $x_m$ from Pareto is from 100000 to 100000000.
+\item 90 test cases.
+\end{itemize}
+Criteria:
+\begin{itemize}
+	\item compare means
+  \item compare VaR(0.95)
+  \item compare performance
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Results.}
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.5]{Results.jpg}
+\end{figure}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{What is missing?}
+\begin{itemize}
+	\item nonuniform discretizations
+  \item algorithms for defining the default parameters
+	\item convolution method is too tricky
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{What else is in \textbf{actuar}?}
+\begin{itemize}
+\item Many probability distributions.
+\item Risk and ruin theory.
+\item Credibility theory.
+\item Support of mixture probability distributions.
+\end{itemize}
+\end{frame}
+\end{document}
