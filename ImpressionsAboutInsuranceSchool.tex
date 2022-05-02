@@ -1,0 +1,288 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\usetheme{Berlin}
+\title{Impressions about School on Insurance, Finance, and Risk Management.}
+\author{Alexey Osipov}
+\begin{document}
+\maketitle
+\begin{frame}[fragile]
+\frametitle{Presentation 2.}
+\begin{center}
+\Large{Tail risk measures}
+\end{center}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Risk measures.}
+Suppose we have data on losses. How to measure risk of this losses?
+
+\begin{itemize}
+	\item \textbf{mean} (average loss)
+	\item \textbf{variance} (average deviation from the average loss)
+	\item \textbf{variance premium} (combination of the 2 measures above)
+	$$VP(X) = E(X) + \alpha Var(X),$$
+	where $\alpha$ is a smartly chosen constant (analog of loading?).
+	\item \textbf{VaR} (how much money is required to cover 95\% of losses for sure)
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Tail risk measures.}
+What if we are interested mostly in rare events (5\% of worst cases)?
+
+\begin{itemize}
+	\item TE(X), \textbf{tail conditional expectation} (shortfall, \textbf{TVaR}),
+	\item TV(X), \textbf{tail variance}
+	\item TVP(X), \textbf{tail variance premium}
+		$$TVP(X) = TE(X) + \alpha TV(X).$$
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Elliptical distributions.}
+Elliptical (mostly for finance):
+\begin{figure}[h!]
+\centering
+\includegraphics[width=50mm, scale=0.1]{EllipticalDistributions.jpg}
+\end{figure}
+Nonelliptical: (multivariate) Pareto (mostly for insurance)
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Asymptotic behaviour in one-dimensional case.}
+Z. Landsman has results for asymptotic behaviour of $TE_q(X)$ and $TV_q(X)$ (when $q$ approaches 1) for:
+\begin{itemize}
+	\item one-dimensional normal distribution
+	\item one-dimensional Student distribution
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Multivariate tail risk measures.}
+\begin{itemize}
+	\item MTE (multivariate tail conditional expectation)
+	\item MTCOV (multivariate tail covariance)
+	\item MTCOR (multivariate tail correlation)
+\end{itemize}
+Z. Landsman has more or less explicit formulas for this tail risk measures for elliptical distributions. 
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Risk measures and portfolio management.}
+We have a number of assets/stocks: $X_1, \ldots, X_n$. Our goal is to construct optimal portfolio out of this assets:
+$$X = w_1X_1 + \ldots + w_nX_n,$$
+$$\sum_{i=1}^n w_i = 1.$$
+so that certain risk measure is optimized:
+$$\rho(X) \longrightarrow \min.$$
+%Classical situation is:
+%$$\rho(X) = E(X) + \alpha*Var(X)$$
+%(classical mean-variance optimization).
+
+Z. Landsman has results for portfolio optimization for various risk measures (all the risk measures discussed in the talk).
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Presentation 3.}
+\begin{center}
+\Large{Options for dependent assets.}
+\end{center}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Problems from financial mathematics}
+\begin{enumerate}
+	\item \textbf{Portfolio selection.} Which stocks will go up, which will go down?
+	
+	\begin{itemize}
+		\item 	Individual stocks are studied separately.
+    \item Volatility and average return.
+		\item Dynamics of the stock price process.
+	\end{itemize}
+	\item \textbf{Systemic risk measurement.} How likely are the stocks to move (down) together?
+	
+\begin{itemize}
+	\item 	Dependence between stocks is studied.
+\item Multivariate modeling.
+\item Copulas.
+\end{itemize}
+\end{enumerate}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Estimating mean and variance.}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=50mm, scale=0.1]{rolling_indicators.jpg}
+\end{figure}
+Estimating mean is much more difficult than estimating variance in the world of finance.
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Options.}
+\begin{enumerate}
+	\item A derivative is an asset which value depends on values of other more basic/underlying assets.
+	\item \textbf{European call option.} The \textbf{right} to buy asset $S$ by strike price $K$ at date $T$. 
+	\item \textbf{European put option.} The \textbf{right} to sell asset $S$ by strike price $K$ at date $T$.
+	\item \textbf{American options} are almost the same. Not at date $T$ but no later than date $T$.
+	\item What if $S$ is a basket? That is a combination of stocks, like an index...
+\end{enumerate}
+\end{frame}
+\begin{frame}
+\frametitle{Black-Scholes model.}
+\begin{itemize}
+\item \textbf{Put-call parity.}
+$$C(K) = P(K) + S - e^{-rT}K.$$
+\item \textbf{Black-Scholes equation.}
+
+The option price is a solution of PDE (with boundary conditions depending on the option type)
+
+$$\frac{\partial V}{\partial t} + \frac{1}{2}\sigma^2S^2\frac{\partial^2 V}{\partial S^2}
++ rS\frac{\partial V}{\partial S} - rV=0$$
+
+\item \textbf{Black-Scholes model.}
+
+$$C(K) = N(d_1)S - N(d_2)e^{-rT}K.$$
+\item Only volatility/variance in formulas, no means. We are \textbf{lucky}!
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Options on indices.}
+\begin{itemize}
+	\item Index is a weighted sum of stocks:
+	$$I = w_1S_1 + \ldots + w_n S_n.$$
+	\item Index shows the power of economy/industry.
+	\item Indices are not traded.
+	\item Options on indices are traded.
+	\item Stocks are dependent.
+	\item Not all strikes are traded for all stocks.
+	\item Choice 1. Approximate the option price.
+	\item Choice 2. Derive the upper bound for it.
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Comonotonicity.}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=50mm, scale=0.08]{Comonotonicity.jpg}
+\end{figure}
+\begin{itemize}
+	\item All stocks are the same as in the original market situation.
+	\item But they are moving in the same direction.
+	\item All stocks depend on the same random source $U$.
+	
+	$F^{-1}_{X_i}(U)$ are values for stock $S_i$.
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Use of comonotonicity.}
+\begin{enumerate}
+  \item We can calculate easily options on comonotonic stocks.
+	\item The price of an option for real (non-comonotonic stocks) is less than the price in the comonotonic situation.
+	$$C(K)\leq\sum_{i=1}^n w_i C_i(K_i^*)$$
+	(result by Daniel Linders)
+	\item Stress test.
+\end{enumerate}
+\end{frame}
+\begin{frame}
+\frametitle{Measuring herd behavior.}
+\begin{itemize}
+	\item How well do the stocks move together?
+	\item Size of the gap between the real world and the comonotonic world.
+	\item \textbf{The ATM comonotonicity gap.}
+	
+	$$ATM GAP = \frac{C_{real}(K)}{C_{comon}(K)}$$
+	\item \textbf{Herd behavior index, HIX, Comonotonicity index, CIX.} 
+	
+	The same but for $u\left(\frac{S}{ES}\right)$ for index $S$ for $u$ chosen in a smart  way, like:
+	$$u(x) = (x-1)^2,\quad\textrm{or}\quad u(x) = -2\ln(x).$$
+	\item \textbf{DHIX, downside herd behavior index.}
+	
+	How well do the stocks move down together?
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Presentation 1.}
+\begin{center}
+\Large{Claims evaluation}
+\end{center}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Claims: goal and examples.}
+\begin{itemize}
+  \item We want to estimate the current fair values of the future claims (e.g., in 1 year).
+	\item $X$ is euro-dollar exchange rate in a year
+	\item $Y$ is 1 euro if insured dies within 1 year, otherwise it is 0
+	\item $X\cdot Y$ is the insured contract in dollars.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Evaluation: questions.}
+\begin{enumerate}
+\item \textbf{Financial quant.} What is a price of claim when traded in an arbitrage-free market?
+\item \textbf{Traditional actuary.} What is a price for taking over the liability ignoring the financial market except the risk-free bank account?
+\item \textbf{Modern actuary.} What is a price for taking over the liability taking into account hedging opportunities in the financial market?
+\end{enumerate}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Non-arbitrage market.}
+\begin{itemize}
+  \item we have $n+1$ assets, we want to connect there values at different time moments
+	\item $r$ is the risk free rate, time period is 1 (e.g., year)
+	\item the assets are liquid
+	\item the assets are not-redundant
+	\item the market is \textit{arbitrage-free}: starting from 0 we can not make some profit with some probability with probability 1 of not losing
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Financial valuation.}
+\begin{itemize}
+\item Suppose that market is arbitrage-free.
+\item \textbf{Hedgeable claim} is a claim that is a result of some trading strategy involving the assets in the market.
+\item \textbf{Hedgeable claim:} price of euro-dollar in a year.
+\item \textbf{Non-hedgeable claim:} price of euro-dollar now, life insurance contract.
+\item Hedgeable claims can be evaluated using techniques from financial mathematics (EMM-measures).
+$$value(S) = e^{-r}E^Q(S).$$
+\item But non hedgeable claims cannot be estimated this way.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Actuarial valuation.}
+\begin{itemize}
+\item We have a market of $n$ traded assets/claims.
+\item \textbf{Orthogonal claim} is a claim that is independent of the traded assets.
+\item \textbf{Orthogonal claim:}
+
+$Y$ is 1 euro if insured dies within 1 year, otherwise it is 0
+\item \textbf{Non-orthogonal claim:} euro-dollar rate in a year.
+\item Orthogonal claims can be evaluated using techniques from actuarial mathematics (actuarial model, risk margin)
+$$value(S) = e^{-r}(E^P(S) + RM(S)).$$
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Examples of risk margins.}
+\begin{itemize}
+\item $r$ is the risk-free rate.
+\item Cost-of-capital principle:
+$$RM(S) = i(VaR^P_{\alpha}(S) - E^P(S)),$$
+where $i$ is the cost-of-capital rate.
+\item Standard deviation principle:
+$$RM(S) = \alpha \sigma^P(S).$$
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Valuation of hybrid claims.}
+Karim Barigou and Jan Dhaene offer a way of evaluating some types of \textbf{hybrid claims}. This claims have both hedgeable and orthogonal parts. It is the combination of financial and actuarial evaluations.
+
+Typical examples are:
+\begin{itemize}
+\item \textbf{Hedgeable claim:} $X$ is euro-dollar exchange rate in a year
+\item \textbf{Orthogonal claim:} $Y$ is 1 euro if insured dies within 1 year, otherwise it is 0
+\item \textbf{Hybrid claim:} $X\cdot Y$ is the insured contract in dollars.
+\end{itemize}
+$$S = S^h\times S^o,$$
+$$value(S) = e^{-r} E^Q(S^h)\times E^P(S^o).$$
+Case of several years is also considered.
+\end{frame}
+\begin{frame}
+\frametitle{Brief summary.}
+\begin{enumerate}
+	\item Tail risk measures are important.
+	\item We can calculate them in the multivariate case as well. 
+	
+	Can it  be used in Actus?
+	\item In financial and actuarial worlds claims are valuated differently. It is possible to combine two approaches.
+	\item If we have a lot of random variables like stocks that are dependent on each other, we can try to assume some artifical dependency, like comonotonicity to get an upper bound.
+	\item We can measure the gap between the real world and the comonotonic world.
+\end{enumerate}
+\end{frame}
+\end{document}

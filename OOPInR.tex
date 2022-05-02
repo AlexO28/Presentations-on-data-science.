@@ -1,0 +1,167 @@
+\documentclass{beamer}
+\usepackage{listings}
+\usetheme{Berlin}
+\title{OOP in R}
+\author{Alexey Osipov}
+\date{11.02.2020}
+\begin{document}
+\maketitle
+\begin{frame}[fragile]
+\frametitle{Systems of classes in R.}
+\begin{itemize}
+\item S3-classes,
+\item S4-classes,
+\item RC- or R5-classes,
+\item R6-classes.
+\end{itemize}
+
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Types of OOP.}
+\begin{itemize}
+	\item Message-passing OOP (Java, C++, C\#).
+	
+	A message is sent to an object, an object chooses a method.
+
+ \begin{lstlisting}
+       canvas.drawRect(“blue”)
+   \end{lstlisting}
+
+\item Generic-function OOP.
+
+A generic function decides which method to call.
+\end{itemize}
+
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{S3 classes}
+\begin{itemize}
+	\item Class is determined by class attribute.
+
+\item Generic function: 
+ \begin{lstlisting}
+UseMethod(“mean”, x)
+ \end{lstlisting}
+We decide which mean we call basing on class:
+ \begin{lstlisting}
+mean.numeric, mean.data.frame,
+ mean.matrix, mean.default.
+ \end{lstlisting}
+
+\item Inheritance: 
+ \begin{lstlisting}
+NextMethod.
+ \end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{S4 classes}
+\begin{itemize}
+	\item Class has: name, representation (slots), contains (character vector of classes that it inherits from).
+
+\item Create class with 
+setClass,
+ create instance with 
+new,
+ set method with 
+setMethod.
+
+\item In S4 we check the types of the slots.
+
+\item We access a slot via @ or slot or [[.
+
+\item S4 is stricter than S3, but still generic function OOP.
+
+
+\item
+ \begin{lstlisting}
+setGeneric, setMethod.
+ \end{lstlisting}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{R5 or RC classes}
+\begin{itemize}
+	\item Message-passing OOP, mutability aka pass by reference.
+	
+	An implementation is environments + S4-classes.
+
+\item Class is: contains, fields, methods.
+
+\item It is possible to add methods after creation.
+
+\item 
+ \begin{lstlisting}
+setRefClass, $new(), obj$method()
+ \end{lstlisting}
+
+We modify fields with 
+ \begin{lstlisting}
+<<-
+ \end{lstlisting}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Drawbacks of R5 classes.}
+
+\begin{enumerate}
+	\item They are slow.
+	\item They are not portable.
+	\item No private methods or fields.
+	\item 
+We detect fields via
+ \begin{lstlisting}
+<<-
+ \end{lstlisting}
+ \begin{lstlisting}
+bar <<- 1         #bar is a field
+ \end{lstlisting}
+ \begin{lstlisting}
+bar <- 1           #bar is a variable
+ \end{lstlisting}
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{R6 classes}
+
+\begin{itemize}
+	\item Message-passing OOP, mutability aka pass by reference.
+	\item public, private (aka protected)
+	\item active binding (non-trivial getter)
+	\item 
+	 \begin{lstlisting}
+	class$new(), obj$method(), obj$field.
+ \end{lstlisting}
+\item
+we detect field via: 
+	 \begin{lstlisting}
+self$, private$
+	 \end{lstlisting}
+\item Inheritance.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{R6 classes, continued}
+\begin{itemize}
+	\item Special treatment of fields passed by reference.
+	\item Portable vs non-portable.
+\item Possibility of class modification after creation.
+\item Faster and simpler than R5-classes.
+\item Debug is tricky:
+	 \begin{lstlisting} 
+class$debug('method')
+	 \end{lstlisting} 
+enables debug, then
+	 \begin{lstlisting}
+debug(object$method).
+	 \end{lstlisting}
+\end{itemize}
+\end{frame}
+\end{document}

@@ -1,0 +1,156 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\usetheme{Berlin}
+\title{Prediction Markets.}
+\author{Alexey Osipov}
+\date{20.02.2020}
+\begin{document}
+\maketitle
+\begin{frame}[fragile]
+\frametitle{Equal probabilities experiment.}
+\begin{itemize}
+	\item Suppose we vote on an unbiased coin (50\%-50\%).
+
+What should be the ratio of votes?
+
+\ 
+
+\ 
+
+\ 
+
+\item Suppose we bet instead of voting?
+
+What should be the ratio of volumes?
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Inequal probabilities experiment.}
+\begin{itemize}
+	\item Suppose we vote on a biased coin (80\%-20\%).
+
+What should be the ratio of votes?
+
+\ 
+
+\ 
+
+\ 
+
+\item Suppose we bet instead of voting?
+
+What should be the ratio of volumes?
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{What is a prediction market?}
+
+It is a market of betting on events with a random outcome.
+The probabilities of the outcome are identified from the bets.
+
+In most cases the outcome probability is almost constant.
+
+\ 
+
+Examples of prediction markets:
+\begin{enumerate}
+	\item www.betfair.com (betting)
+	\item www.crowdmed.com (medicine)
+\end{enumerate}
+
+Non-examples:
+\begin{enumerate}
+	\item stock market
+	\item betting company
+\end{enumerate}
+
+? www.ladbrokes.com ?
+\ 
+
+Could they be used in insurance?
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Bet for and bet against.}
+Suppose we have an outcome.
+
+\begin{itemize}
+	\item A bet for the outcome by price $k$ is a contract: either get $k-1$ or loose $1$ depending on the event outcome.
+  \item A bet against the outcome by price $k$ is a contract: either loose $k-1$ or get $1$ depending on the event outcome.
+\end{itemize}
+Naturally, they are complementary.
+
+A bet against the outcome can be considered as the bet for the alternative outcome and vice versa (see the next slide).
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Simple betting example.}
+
+Let $k_1, k_2$ be the prices:
+$$p_1=\frac{1}{k_1},\quad p_2=\frac{1}{k_2}, \qquad\frac{1}{k_1} + \frac{1}{k_2} = 1.$$
+Let $s_1, s_2$ be the volumes. We expect:
+$$s_1/p_1 = s_2/p_2$$
+if the prices agree with probabilities.
+
+The prices that agree with probabilities are \textbf{equilibrium prices}.
+
+Suppose we are allowed to adjust the prices depending on the volumes.
+If we do it in a reasonable way, the prices will converge to \textbf{equilibrium prices}.
+
+The question is how soon...
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Components of prediction market.}
+\begin{itemize}
+	\item The way of matching orders of different people into bets.
+	\item The way of identifying the outcome probability by orders and bets.
+	\item The policy about cancellation of orders.
+	\item The policy about visibility of orders and bets.
+	\item The market-maker (usually, it is used).
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Order book.}
+\begin{figure}
+\centering
+\includegraphics[width=50mm,scale=0.5]{OrderBookExample.jpg}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=50mm,scale=0.5]{MatchingOrders.jpg}
+\end{figure}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Identifying the probability.}
+If the outcome probability does not change, at some point the prices should stabilize.
+
+Once they are more or less stable, we can say
+$$p = 1/k.$$
+
+There are problems with this approach:
+\begin{enumerate}
+	\item What to do if there are not enough orders/bets 
+	
+	(\textbf{cold start})?
+	\item What to do if bid-ask spread is too large 
+	
+	(\textbf{non-liquid market})?
+\end{enumerate}
+
+We try to resolve this problems with a model.
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Key model components.}
+\begin{enumerate}
+  \item Small world assumption: $M$ is the maximal amount of capital.
+	\item Utility functions:
+	$$U(v, \lambda) = \frac{1-e^{-\lambda x/W}}{1-e^{-\lambda M/W}}.$$
+	\item Predictions of gamblers come from the same distribution
+	\
+	
+	(like $N(\mu, \sigma)$).
+	\item Maximization of a likelihood function.
+	\item Iterative optimization for finding $\mu$, $\sigma$, $\lambda$.
+	\item Once $\mu$ (and $\lambda$, $\sigma$ are found) we may define $p$ and $k$ by:
+	$$p=\mu,\qquad k=1/p.$$
+\end{enumerate}
+\end{frame}
+\end{document}

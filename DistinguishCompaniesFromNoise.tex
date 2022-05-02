@@ -1,0 +1,64 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\usetheme{Berlin}
+\title{Distinguish companies from noise.}
+\author{Alexey Osipov}
+\date{16.03.2020}
+\begin{document}
+\maketitle
+\begin{frame}[fragile]
+\frametitle{Statement of the problem.}
+Given: the file with 21332 rows with data on GLE claims. It has column Claim\_Name.
+Two cases:
+\begin{itemize}
+	\item It corresponds to the company, e.g.
+	
+	Grangl GmbH
+	\item It corresponds to the noise, e.g.,
+	
+	DO NOT USE Sweco Lietuva UAB
+\end{itemize}
+How to distinguish these two cases?
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Regular expressions approach.}
+\begin{itemize}
+  \item turn to lowercase
+	\item If it contains az, ag, inc, lp, corp, gmbh, ltd, a.s., sp., s.r.o., llc, l.p., p.c., p.a., b.v., then it is a company.
+	\item If it contains dr, accident, prof, year, do not use, tba, then it is a noise.
+	\item Manual validation (knownnotcompanies.csv).
+	\item The approach was used to prepare a labelled data set for the ML approach. 
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{ML approach, part 1}
+\begin{itemize}
+	\item Feature extraction: hasComma, hasDigit, hasBracket, numberOfWords, averageWordLength, numberOfLines,\ldots
+	\item Metric is F1-score, hold out set (20\%), train-test split, 3-fold cross-validation
+	\item Candidate algorithms: random forest, decision tree, gradient boosting, logistic regression, SVN.
+	\item The best was gradient boosting, the second was random forest.
+	\item F1-score was good, but there were problems on the unlabelled dataset.
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{ML approach, part 2}
+\begin{itemize}
+	\item Only the best features:
+	
+\begin{figure}
+\centering
+\includegraphics[width=50mm,scale=0.8]{feature_importance.jpg}
+\end{figure}
+	
+	\item Model: Decision tree. 
+	
+%	F1scores: 0.9062, 0.8905, 0.932
+	$$F1_{CV} = 0.9062, F1_{test} = 0.8905, F1_{rep} = 0.932.$$
+	
+	About 66\% of data corresponds to companies.
+	
+	\item Solution in R and Python.
+	
+\end{itemize}
+\end{frame}
+\end{document}
